@@ -1,0 +1,35 @@
+{% extends 'shopapp/base.html' %}
+
+{% block title %}Профиль - {{ player.nickname }}{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h1>Личный кабинет</h1>
+    </div>
+
+    <div class="profile-grid">
+        <!-- Информация о пользователе -->
+        <div class="profile-card">
+            <h3>Ваши данные</h3>
+            <p><strong>Никнейм:</strong> {{ player.nickname }}</p>
+            <p><strong>E-mail:</strong> {{ player.email }}</p>
+            <p><strong>Роль:</strong> {{ player.role }}</p>
+            <button class="btn-secondary">Редактировать профиль</button>
+        </div>
+
+        <!-- Список избранного -->
+        <div class="profile-card">
+            <h3>Избранные игры</h3>
+            <ul class="fav-list">
+                {% for fav in player.favorite_games %}
+                <li>
+                    <span>{{ fav.title }}</span>
+                    <button class="btn-remove">Удалить</button>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

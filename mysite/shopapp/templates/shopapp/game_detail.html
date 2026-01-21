@@ -1,0 +1,31 @@
+{% extends 'shopapp/base.html' %}
+
+{% block title %}{{ game.title }}{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <div class="detail-header">
+        <a href="/" class="btn-back">← Назад в каталог</a>
+        <h1>{{ game.title }}</h1>
+    </div>
+
+    <div class="game-info-card">
+        <div class="info-main">
+            <div class="info-item"><span>Жанр:</span> {{ game.genre }}</div>
+            <div class="info-item"><span>Издатель:</span> {{ game.publisher }}</div>
+            <div class="info-item"><span>Страна:</span> {{ game.country }}</div>
+            <div class="info-item"><span>Год выпуска:</span> {{ game.release_year }}</div>
+            <div class="info-item rating"><span>Рейтинг:</span> {{ game.rating }}/10</div>
+        </div>
+
+        <div class="info-description">
+            <h3>Описание</h3>
+            <p>{{ game.description }}</p>
+        </div>
+
+        <div class="info-actions">
+            <button class="btn-main">⭐ Добавить в избранное</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

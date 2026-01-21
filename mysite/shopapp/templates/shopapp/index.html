@@ -1,0 +1,33 @@
+{% extends 'shopapp/base.html' %}
+
+{% block content %}
+<section class="catalog-header">
+    <h1>Исследуй миры</h1>
+    <form method="get" action="{% url 'index' %}" class="filter-form">
+        <input type="text" name="q" placeholder="Поиск игры..." value="{{ query }}" class="search-input">
+        <select name="genre">
+            <option value="">Все жанры</option>
+            <option value="rpg">RPG</option>
+            <option value="action">Action</option>
+        </select>
+        <button type="submit" class="btn-main">Найти</button>
+    </form>
+</section>
+
+<div class="games-grid">
+    {% for game in games %}
+    <div class="game-card">
+        <div class="rating-badge">{{ game.rating }}</div>
+        <h3>{{ game.title }}</h3>
+        <div class="game-info">
+            <p><strong>Жанр:</strong> {{ game.genre }}</p>
+            <p><strong>Год:</strong> {{ game.release_year }}</p>
+            <p><strong>Издатель:</strong> {{ game.publisher }}</p>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'game_detail' game.game_id %}" class="btn-main" style="width: 100%; text-decoration: none; text-align: center; display: block;">Подробнее</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
