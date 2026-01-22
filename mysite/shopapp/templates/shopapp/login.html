@@ -1,29 +1,50 @@
 {% extends 'shopapp/base.html' %}
 
-{% block title %}Вход в систему{% endblock %}
+{% block title %}Вход в систему — GameCatalog{% endblock %}
 
 {% block content %}
-<div class="auth-wrapper">
-    <div class="auth-card">
-        <h2>Вход</h2>
-        <p class="auth-subtitle">Рады видеть тебя снова!</p>
+<div class="auth-container fade-in">
+    <div class="auth-card login-card">
+        <!-- Декоративная полоса сверху -->
+        <div class="card-glow-line"></div>
+
+        <div class="auth-header">
+            <h2>Авторизация</h2>
+            <p class="auth-subtitle">Введите учетные данные для доступа к профилю</p>
+        </div>
 
         <form method="post" class="auth-form">
             {% csrf_token %}
-            <div class="form-group">
-                <label>E-mail (Логин)</label>
-                <input type="email" name="email" placeholder="example@mail.com" required>
+
+            {% if form.errors %}
+                <div class="error-summary">
+                    Неверный email или пароль
+                </div>
+            {% endif %}
+
+            <div class="form-group-custom">
+                <label for="id_email">Электронная почта</label>
+                <div class="input-wrapper">
+                    <input type="email" name="email" id="id_email" placeholder="mail@example.com" required>
+                    <span class="input-focus-line"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Пароль</label>
-                <input type="password" name="password" placeholder="••••••••" required>
+
+            <div class="form-group-custom">
+                <label for="id_password">Пароль</label>
+                <div class="input-wrapper">
+                    <input type="password" name="password" id="id_password" placeholder="••••••••" required>
+                    <span class="input-focus-line"></span>
+                </div>
             </div>
-            <button type="submit" class="btn-main full-width">Войти</button>
+
+            <button type="submit" class="btn btn-primary full-width btn-login">
+                Войти
+            </button>
         </form>
 
         <div class="auth-footer">
-            <span>Нет аккаунта?</span>
-            <a href="{% url 'register' %}">Зарегистрироваться</a>
+            <p>Новый пользователь? <a href="{% url 'register' %}">Создать аккаунт</a></p>
         </div>
     </div>
 </div>

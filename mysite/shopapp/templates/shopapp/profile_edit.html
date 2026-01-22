@@ -1,0 +1,29 @@
+{% extends 'shopapp/base.html' %}
+
+{% block title %}Редактирование профиля{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2>Настройки профиля</h2>
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="form-group">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="error-text">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn-main">Сохранить изменения</button>
+                <a href="{% url 'profile' %}" class="btn-secondary" style="text-decoration: none; padding: 10px; border: 1px solid #ccc; border-radius: 5px; color: #333;">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

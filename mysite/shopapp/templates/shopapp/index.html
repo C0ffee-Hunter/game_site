@@ -1,48 +1,63 @@
 {% extends 'shopapp/base.html' %}
 
 {% block content %}
-<section class="catalog-header">
-    <h1>Исследуй миры</h1>
-    <form method="get" action="{% url 'index' %}" class="filter-form">
-        <input type="text" name="q" placeholder="Поиск игры..." value="{{ query }}" class="search-input">
-        <select name="genre">
-            <option value="">Все жанры</option>
-            <option value="rpg">RPG</option>
-            <option value="Action-RPG">Action-RPG</option>
-            <option value="Шутер">Шутер</option>
-            <option value="Стратегия">Стратегия</option>
-            <option value="Roguelike">Roguelike</option>
-            <option value="Метроидвания">Метроидвания</option>
-            <option value="Симулятор">Симулятор</option>
-            <option value="Выживание">Выживание</option>
-            <option value="Приключение">Приключение</option>
-            <option value="Песочница">Песочница</option>
-            <option value="Платформер">Платформер</option>
-            <option value="Головоломка">Головоломка</option>
-            <option value="Карточная игра">Карточная игра</option>
-            <option value="Экшен">Экшен</option>
-            <option value="Хоррор">Хоррор</option>
-            <option value="Слэшер">Слэшер</option>
-            <option value="Гонки">Гонки</option>
-            <option value="Спорт">Спорт</option>
-            <option value="Аркада">Аркада</option>
-        </select>
-        <button type="submit" class="btn-main">Найти</button>
-    </form>
+<section class="catalog-header fade-in">
+    <div class="header-content">
+        <h1>Исследуй <span>миры</span></h1>
+        <p class="subtitle">Тысячи приключений ждут тебя в нашей базе данных</p>
+    </div>
+
+    <div class="search-wrapper">
+        <form method="get" action="{% url 'index' %}" class="filter-form">
+            <div class="input-group search-bar">
+                <i class="icon-search">🔍</i>
+                <input type="text" name="q" placeholder="Название игры..." value="{{ query|default:'' }}" class="search-input">
+            </div>
+
+            <div class="input-group">
+                <select name="genre" class="genre-select">
+                    <option value="">Все жанры</option>
+                    <option value="rpg">RPG</option>
+                    <option value="Action-RPG">Action-RPG</option>
+                    <option value="Шутер">Шутер</option>
+                    <option value="Стратегия">Стратегия</option>
+                    <option value="Roguelike">Roguelike</option>
+                    <option value="Метроидвания">Метроидвания</option>
+                    <option value="Симулятор">Симулятор</option>
+                    <option value="Выживание">Выживание</option>
+                    <option value="Приключение">Приключение</option>
+                    <option value="Песочница">Песочница</option>
+                    <option value="Платформер">Платформер</option>
+                    <option value="Головоломка">Головоломка</option>
+                    <option value="Карточная игра">Карточная игра</option>
+                    <option value="Экшен">Экшен</option>
+                    <option value="Хоррор">Хоррор</option>
+                    <option value="Слэшер">Слэшер</option>
+                    <option value="Гонки">Гонки</option>
+                    <option value="Спорт">Спорт</option>
+                    <option value="Аркада">Аркада</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-main btn-search">
+                Найти игры
+            </button>
+        </form>
+    </div>
 </section>
 
 <div class="games-grid">
     {% for game in games %}
-    <div class="game-card">
+    <div class="game-card fade-in">
         <div class="rating-badge">{{ game.rating }}</div>
         <h3>{{ game.title }}</h3>
         <div class="game-info">
-            <p><strong>Жанр:</strong> {{ game.genre }}</p>
-            <p><strong>Год:</strong> {{ game.release_year }}</p>
-            <p><strong>Издатель:</strong> {{ game.publisher }}</p>
+            <p><span>Жанр:</span> {{ game.genre }}</p>
+            <p><span>Год:</span> {{ game.release_year }}</p>
+            <p><span>Издатель:</span> {{ game.publisher }}</p>
         </div>
         <div class="card-footer">
-            <a href="{% url 'game_detail' game.game_id %}" class="btn-main" style="width: 100%; text-decoration: none; text-align: center; display: block;">Подробнее</a>
+            <a href="{% url 'game_detail' game.game_id %}" class="btn btn-secondary full-width">Подробнее</a>
         </div>
     </div>
     {% endfor %}

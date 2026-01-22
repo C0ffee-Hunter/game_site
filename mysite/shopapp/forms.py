@@ -2,16 +2,47 @@ from django import forms
 from .models import User, Player
 
 class RegistrationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput, label="Пароль")
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Повторите пароль")
-    nickname = forms.CharField(max_length=100, label="Ваш никнейм")
+    email = forms.EmailField(label="Email")
+    password = forms.CharField(widget=forms.PasswordInput(), label="Пароль")
+    password_confirm = forms.CharField(widget=forms.PasswordInput(), label="Повторите пароль")
+    nickname = forms.CharField(label="Никнейм")
 
     class Meta:
         model = User
-        fields = ['email']
+        fields = ('email', 'password')
 
-    def clean(self):
-        cleaned_data = super().clean()
-        if cleaned_data.get("password") != cleaned_data.get("confirm_password"):
+
+    def clean_password_confirm(self):
+        p1 = self.cleaned_data.get('password')
+        p2 = self.cleaned_data.get('password_confirm')
+        if p1 != p2:
             raise forms.ValidationError("Пароли не совпадают")
-        return cleaned_data
+        return p2
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = Player
+        fields = ['nickname', 'bio', 'avatar_url']
+        labels = {
+            'nickname': 'Ваш никнейм',
+            'bio': 'О себе',
+            'avatar_url': 'Ссылка на аватар'
+        }
+        widgets = {
+            'bio': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Расскажите о себе...'}),
+        }
+
+class PlayerProfileForm(forms.ModelForm):
+    class Meta:
+        model = Player
+        fields = ['nickname', 'avatar_url', 'bio'] # Поля, которые можно менять
+        widgets = {
+            'nickname': forms.TextInput(attrs={'class': 'form-input'}),
+            'avatar_url': forms.URLInput(attrs={'class': 'form-input', 'placeholder': 'https://...'}),
+            'bio': forms.Textarea(attrs={'class': 'form-input', 'rows': 4}),
+        }
+        labels = {
+            'nickname': 'Никнейм (псевдоним)',
+            'avatar_url': 'Ссылка на аватар',
+            'bio': 'О себе',
+        }

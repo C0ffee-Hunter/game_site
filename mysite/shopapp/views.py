@@ -1,12 +1,13 @@
-from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.decorators import login_required
 from .models import Game, Player, User
 from .forms import RegistrationForm
-from django.contrib import messages
-from django.shortcuts import render, get_object_or_404
 from .models import Game
 from django.db.models import Q # Импортируем Q для сложного поиска
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .forms import ProfileEditForm
+from .models import Player
+from .forms import PlayerProfileForm
 
 
 # Главная страница (Каталог)
@@ -44,25 +45,35 @@ def register_view(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            # Создаем пользователя
-            user = User.objects.create_user(
-                email=form.cleaned_data['email'],
-                password=form.cleaned_data['password']
-            )
-            # Создаем связанный профиль игрока
-            Player.objects.create(user=user, nickname=form.cleaned_data['nickname'])
+            # 1. Сохраняем пользователя (но не в БД сразу, чтобы захешировать пароль)
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])  # Хешируем пароль
+            user.role = 'player'  # Устанавливаем роль по умолчанию
+            user.save()  # Теперь сохраняем в таблицу users
+
+            # 3. Автоматически логиним пользователя после регистрации
             login(request, user)
-            return redirect('index')
+            return redirect('profile')  # Перенаправляем в личный кабинет
+        else:
+            print(form.errors)
+            form = RegistrationForm()
     else:
         form = RegistrationForm()
+
     return render(request, 'shopapp/register.html', {'form': form})
+
 
 # Профиль
 @login_required
 def profile_view(request):
     # Получаем профиль текущего игрока
-    player = Player.objects.get(user=request.user)
-    return render(request, 'shopapp/profile.html', {'player': player})
+    #player = Player.objects.get(user=request.user)
+    #return render(request, 'shopapp/profile.html', {'player': player})
+    player, created = Player.objects.get_or_create(
+        user=request.user,
+        defaults={'nickname': request.user.email.split('@')[0]}  # временный ник из почты
+    )
+    return render(request, 'accounts/profile.html', {'player': player})
 
 @login_required
 def add_to_favorites(request, game_id):
@@ -111,3 +122,61 @@ def index_view(request):
         'query': query,
         'genre_selected': genre_query  # Передаем, чтобы сохранить выбор в выпадающем списке
     })
+
+
+# Просмотр профиля
+@login_required
+def profile_view(request):
+    # Получаем игрока, связанного с текущим пользователем
+    player = get_object_or_404(Player, user=request.user)
+    return render(request, 'shopapp/profile.html', {'player': player})
+
+
+# Редактирование профиля
+@login_required
+def edit_profile(request):
+    player = get_object_or_404(Player, user=request.user)
+
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST, instance=player)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')  # Возвращаемся в профиль после сохранения
+    else:
+        form = ProfileEditForm(instance=player)
+
+    return render(request, 'shopapp/edit_profile.html', {'form': form})
+
+
+@login_required
+def edit_profile_view(request):
+    # Получаем профиль игрока, привязанного к текущему пользователю
+    player = get_object_or_404(Player, user=request.user)
+
+    if request.method == 'POST':
+        # Заполняем форму данными из запроса и привязываем к существующему объекту player
+        form = PlayerProfileForm(request.POST, instance=player)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')  # После сохранения отправляем на страницу профиля
+    else:
+        # Если это просто переход на страницу — показываем форму с текущими данными
+        form = PlayerProfileForm(instance=player)
+
+    return render(request, 'shopapp/profile_edit.html', {'form': form})
+
+
+# Добавление в избранное
+@login_required
+def add_to_favorites(request, game_id):
+    if request.method == 'POST': # Обрабатываем только нажатие кнопки
+        game = get_object_or_404(Game, game_id=game_id)
+        request.user.player.favorite_games.add(game)
+    return redirect(request.META.get('HTTP_REFERER', 'index'))
+
+@login_required
+def remove_from_favorites(request, game_id):
+    if request.method == 'POST': # Обрабатываем только нажатие кнопки
+        game = get_object_or_404(Game, game_id=game_id)
+        request.user.player.favorite_games.remove(game)
+    return redirect(request.META.get('HTTP_REFERER', 'profile'))

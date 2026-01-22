@@ -1,0 +1,19 @@
+{% extends 'shopapp/base.html' %}
+
+{% block title %}Редактирование профиля{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2>Редактирование профиля</h2>
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button type="submit" class="btn-main">💾 Сохранить</button>
+                <a href="{% url 'profile' %}" class="btn-back" style="text-decoration: none;">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

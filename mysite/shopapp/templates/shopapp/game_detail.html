@@ -3,29 +3,204 @@
 {% block title %}{{ game.title }}{% endblock %}
 
 {% block content %}
-<div class="detail-container">
-    <div class="detail-header">
-        <a href="/" class="btn-back">← Назад в каталог</a>
-        <h1>{{ game.title }}</h1>
+<div class="detail-wrapper fade-in">
+    <!-- Навигация назад -->
+    <div class="back-nav">
+        <a href="{% url 'index' %}" class="btn btn-secondary btn-sm">
+            <span class="icon">←</span> Назад в каталог
+        </a>
     </div>
 
-    <div class="game-info-card">
-        <div class="info-main">
-            <div class="info-item"><span>Жанр:</span> {{ game.genre }}</div>
-            <div class="info-item"><span>Издатель:</span> {{ game.publisher }}</div>
-            <div class="info-item"><span>Страна:</span> {{ game.country }}</div>
-            <div class="info-item"><span>Год выпуска:</span> {{ game.release_year }}</div>
-            <div class="info-item rating"><span>Рейтинг:</span> {{ game.rating }}/10</div>
+    <div class="game-main-card">
+        <!-- Заголовок и рейтинг -->
+        <div class="game-hero">
+            <div class="hero-text">
+                <span class="category-tag">{{ game.genre }}</span>
+                <h1>{{ game.title }}</h1>
+            </div>
+            <div class="hero-rating">
+                <div class="rating-value">{{ game.rating }}</div>
+                <div class="rating-label">Рейтинг базы</div>
+            </div>
         </div>
 
-        <div class="info-description">
-            <h3>Описание</h3>
-            <p>{{ game.description }}</p>
+        <!-- Сетка характеристик -->
+        <div class="specs-grid">
+            <div class="spec-item">
+                <span class="spec-label">Издатель</span>
+                <span class="spec-value">{{ game.publisher }}</span>
+            </div>
+            <div class="spec-item">
+                <span class="spec-label">Страна</span>
+                <span class="spec-value">{{ game.country }}</span>
+            </div>
+            <div class="spec-item">
+                <span class="spec-label">Год выпуска</span>
+                <span class="spec-value">{{ game.release_year }}</span>
+            </div>
+            <div class="spec-item">
+                <span class="spec-label">Жанр</span>
+                <span class="spec-value">{{ game.genre }}</span>
+            </div>
         </div>
 
-        <div class="info-actions">
-            <button class="btn-main">⭐ Добавить в избранное</button>
+        <!-- Описание -->
+        <div class="description-section">
+            <h3>О проекте</h3>
+            <p>{{ game.description|default:"Увлекательное приключение в жанре " }} {{ game.genre }}. Исследуйте проработанный мир от компании {{ game.publisher }}, выпущенный в {{ game.release_year }} году.</p>
+        </div>
+
+        <!-- Кнопки действий -->
+        <div class="detail-actions">
+            {% if user.is_authenticated %}
+                {% if game in user.player.favorite_games.all %}
+                    <form action="{% url 'remove_from_favorites' game.game_id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-massive btn-danger">
+                            <span class="icon">🗑</span> Удалить из коллекции
+                        </button>
+                    </form>
+                {% else %}
+                    <form action="{% url 'add_to_favorites' game.game_id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-massive btn-fav-add">
+                            <span class="icon">⭐</span> Добавить в избранное
+                        </button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <div class="login-prompt">
+                    <p><a href="{% url 'login' %}">Войдите</a>, чтобы добавить игру в избранное</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
+
+<style>
+    /* Стили специально для этой страницы */
+    .detail-wrapper {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+
+    .back-nav { margin-bottom: 25px; }
+
+    .game-main-card {
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 50px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+
+    /* Шапка игры */
+    .game-hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 40px;
+        border-bottom: 1px solid var(--glass-border);
+        padding-bottom: 30px;
+    }
+
+    .category-tag {
+        color: var(--accent);
+        text-transform: uppercase;
+        font-weight: 800;
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+    }
+
+    .game-hero h1 {
+        font-size: 3.5rem;
+        line-height: 1.1;
+        margin-top: 10px;
+    }
+
+    .hero-rating { text-align: center; }
+    .rating-value {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--accent);
+        text-shadow: 0 0 20px var(--accent-glow);
+    }
+    .rating-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+
+    /* Сетка ТТХ */
+    .specs-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .spec-item {
+        background: rgba(255,255,255,0.03);
+        padding: 15px 20px;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .spec-label { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; }
+    .spec-value { font-weight: 600; font-size: 1.1rem; }
+
+    /* Описание */
+    .description-section h3 { margin-bottom: 15px; color: var(--accent); }
+    .description-section p { color: #ccc; font-size: 1.1rem; line-height: 1.8; }
+
+    /* Кнопки */
+    .detail-actions { margin-top: 50px; }
+
+    .btn-massive {
+        width: 100%;
+        padding: 20px;
+        font-size: 1.2rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-radius: 15px;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .btn-fav-add {
+        background: var(--gold);
+        color: #000;
+        box-shadow: 0 10px 30px rgba(241, 196, 15, 0.2);
+    }
+
+    .btn-fav-add:hover {
+        transform: scale(1.02);
+        background: #fff;
+        box-shadow: 0 15px 40px rgba(241, 196, 15, 0.4);
+    }
+
+    .btn-danger {
+        background: rgba(255, 75, 43, 0.1);
+        color: var(--danger);
+        border: 2px solid var(--danger);
+    }
+
+    .btn-danger:hover {
+        background: var(--danger);
+        color: #fff;
+        box-shadow: 0 10px 30px rgba(255, 75, 43, 0.3);
+    }
+
+    .login-prompt {
+        text-align: center;
+        padding: 20px;
+        border: 1px dashed var(--glass-border);
+        border-radius: 15px;
+    }
+
+    .login-prompt a { color: var(--accent); font-weight: bold; }
+</style>
 {% endblock %}

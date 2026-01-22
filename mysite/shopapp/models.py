@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 # --- Менеджер для кастомного пользователя ---
 class UserManager(BaseUserManager):
@@ -93,10 +96,22 @@ class Player(models.Model):
 
 # --- Промежуточная таблица "Любимые игры" (player_favorite_games) ---
 class PlayerFavoriteGame(models.Model):
+    # Django автоматически создаст поле id, если его нет,
+    # но так как мы его добавили в БД, просто оставляем как есть.
     player = models.ForeignKey(Player, on_delete=models.CASCADE, db_column='player_id')
     game = models.ForeignKey(Game, on_delete=models.CASCADE, db_column='game_id')
     added_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'player_favorite_games'
+        # Это важно для Django:
         unique_together = (('player', 'game'),)
+
+@receiver(post_save, sender=User)
+def create_player_profile(sender, instance, created, **kwargs):
+    if created:
+        # Создаем игрока автоматически при создании пользователя
+        Player.objects.get_or_create(
+            user=instance,
+            defaults={'nickname': instance.email.split('@')[0]}
+        )

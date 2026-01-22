@@ -1,40 +1,77 @@
 {% extends 'shopapp/base.html' %}
 
-{% block title %}Регистрация{% endblock %}
+{% block title %}Регистрация | GameCatalog{% endblock %}
 
 {% block content %}
-<div class="auth-wrapper">
+<div class="auth-wrapper fade-in">
     <div class="auth-card">
-        <h2>Регистрация</h2>
-        <p class="auth-subtitle">Присоединяйся к сообществу игроков</p>
+        <div class="auth-header">
+            <h2>Создать профиль</h2>
+            <p class="auth-subtitle">Введите данные для инициализации в системе</p>
+        </div>
 
         <form method="post" class="auth-form">
             {% csrf_token %}
-            <div class="form-group">
-                <label>Никнейм</label>
-                <input type="text" name="nickname" placeholder="Твой крутой ник" required>
+
+            <div class="form-grid">
+                <!-- Никнейм -->
+                <div class="form-group">
+                    <label><i class="icon">👤</i> Никнейм</label>
+                    <input type="text" name="nickname" placeholder="CyberHero_2025" required>
+                    <span class="input-line"></span>
+                </div>
+
+                <!-- E-mail -->
+                <div class="form-group">
+                    <label><i class="icon">📧</i> E-mail</label>
+                    <input type="email" name="email" placeholder="nexus@grid.com" required>
+                    <span class="input-line"></span>
+                </div>
+
+                <!-- Пароли -->
+                <div class="form-group">
+                    <label><i class="icon">🔒</i> Пароль</label>
+                    <input type="password" name="password" placeholder="••••••••" required>
+                    <span class="input-line"></span>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="icon">🔄</i> Повтор пароля</label>
+                    <input type="password" name="password_confirm" placeholder="••••••••" required>
+                    <span class="input-line"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label>E-mail</label>
-                <input type="email" name="email" placeholder="example@mail.com" required>
+
+            <!-- КРАСИВЫЙ ВЫБОР РОЛИ -->
+            <div class="role-selector-wrapper">
+                <label class="label-center">Выберите вашу роль</label>
+                <div class="role-options">
+                    <label class="role-card">
+                        <input type="radio" name="role" value="player" checked>
+                        <div class="role-content">
+                            <span class="role-icon">🎮</span>
+                            <span class="role-name">Игрок</span>
+                        </div>
+                    </label>
+
+                    <label class="role-card">
+                        <input type="radio" name="role" value="admin">
+                        <div class="role-content">
+                            <span class="role-icon">⚡</span>
+                            <span class="role-name">Админ</span>
+                        </div>
+                    </label>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Пароль</label>
-                <input type="password" name="password" placeholder="Придумайте пароль" required>
-            </div>
-            <div class="form-group">
-                <label>Кто вы?</label>
-                <select name="role">
-                    <option value="player">Игрок</option>
-                    <option value="admin">Администратор</option>
-                </select>
-            </div>
-            <button type="submit" class="btn-main full-width">Создать аккаунт</button>
+
+            <button type="submit" class="btn btn-primary btn-auth">
+                Зарегистрироваться <span>→</span>
+            </button>
         </form>
 
         <div class="auth-footer">
-            <span>Уже есть аккаунт?</span>
-            <a href="{% url 'login' %}">Войти</a>
+            <span>Уже в системе?</span>
+            <a href="{% url 'login' %}" class="link-accent">Авторизоваться</a>
         </div>
     </div>
 </div>
