@@ -13,4 +13,7 @@ urlpatterns = [
     path('profile/edit/', views.edit_profile_view, name='edit_profile'), # Новая строка
     path('favorite/add/<int:game_id>/', views.add_to_favorites, name='add_to_favorites'),
     path('favorite/remove/<int:game_id>/', views.remove_from_favorites, name='remove_from_favorites'),
+    path('dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('dashboard/game/delete/<int:game_id>/', views.admin_delete_game, name='admin_delete_game'),
+    path('dashboard/user/delete/<int:user_id>/', views.admin_delete_user, name='admin_delete_user'),
 ]

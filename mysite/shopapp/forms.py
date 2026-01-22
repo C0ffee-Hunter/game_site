@@ -1,5 +1,6 @@
-from django import forms
 from .models import User, Player
+from django import forms
+from .models import Game
 
 class RegistrationForm(forms.ModelForm):
     email = forms.EmailField(label="Email")
@@ -45,4 +46,13 @@ class PlayerProfileForm(forms.ModelForm):
             'nickname': 'Никнейм (псевдоним)',
             'avatar_url': 'Ссылка на аватар',
             'bio': 'О себе',
+        }
+
+
+class GameForm(forms.ModelForm):
+    class Meta:
+        model = Game
+        fields = ['title', 'genre', 'publisher', 'country', 'release_year', 'rating']
+        widgets = {
+            field: forms.TextInput(attrs={'class': 'admin-input'}) for field in ['title', 'genre', 'publisher', 'country']
         }

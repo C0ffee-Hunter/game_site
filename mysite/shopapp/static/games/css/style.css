@@ -709,3 +709,186 @@ body {
 .auth-footer { margin-top: 30px; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
 .link-accent { color: var(--accent); text-decoration: none; font-weight: bold; margin-left: 5px; }
 .link-accent:hover { text-decoration: underline; }
+
+/* --- ГЛАВНАЯ КНОПКА ДОБАВЛЕНИЯ --- */
+.btn-cyber-add {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    background: var(--accent);
+    color: #000;
+    padding: 14px 28px;
+    border-radius: 4px; /* Острые углы для стиля милитари/киберпанк */
+    text-decoration: none;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    overflow: hidden;
+    transition: 0.3s;
+    border-left: 4px solid #fff;
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.btn-cyber-add:hover {
+    background: #fff;
+    transform: scale(1.05);
+    box-shadow: 0 0 30px var(--accent);
+}
+
+.plus-icon {
+    font-size: 1.4rem;
+    margin-right: 12px;
+}
+
+/* Пульсация кнопки добавления */
+@keyframes cyber-pulse {
+    0% { box-shadow: 0 0 10px var(--accent-glow); }
+    50% { box-shadow: 0 0 25px var(--accent-glow); }
+    100% { box-shadow: 0 0 10px var(--accent-glow); }
+}
+.btn-cyber-add { animation: cyber-pulse 2s infinite; }
+
+
+/* --- КНОПКИ В ТАБЛИЦЕ (Шестигранники/Квадраты) --- */
+.action-group {
+    display: flex;
+    gap: 12px;
+}
+
+.admin-btn-hex {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-decoration: none;
+}
+
+/* Стиль кнопки РЕДАКТИРОВАТЬ */
+.admin-btn-hex.edit {
+    color: var(--gold);
+    border-color: rgba(241, 196, 15, 0.3);
+}
+
+.admin-btn-hex.edit:hover {
+    background: var(--gold);
+    color: #000;
+    transform: translateY(-3px) rotate(15deg);
+    box-shadow: 0 5px 15px rgba(241, 196, 15, 0.4);
+}
+
+/* Стиль кнопки УДАЛИТЬ */
+.admin-btn-hex.delete {
+    color: var(--danger);
+    border-color: rgba(255, 75, 43, 0.3);
+}
+
+.admin-btn-hex.delete:hover {
+    background: var(--danger);
+    color: #fff;
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 5px 15px rgba(255, 75, 43, 0.4);
+    border-radius: 50%; /* Превращается в круг при наведении */
+}
+
+/* Анимация иконки внутри при наведении */
+.admin-btn-hex:hover .icon {
+    animation: wiggle 0.5s ease infinite;
+}
+
+@keyframes wiggle {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(10deg); }
+    75% { transform: rotate(-10deg); }
+    100% { transform: rotate(0deg); }
+}
+
+/* Кнопка в навигации */
+.admin-nav-link {
+    color: var(--gold) !important; /* Золотой цвет для админа */
+    font-weight: 800 !important;
+    border: 1px solid rgba(241, 196, 15, 0.3);
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    transition: 0.3s;
+}
+
+.admin-nav-link:hover {
+    background: rgba(241, 196, 15, 0.1);
+    box-shadow: 0 0 10px rgba(241, 196, 15, 0.3);
+}
+
+.gear-icon {
+    margin-right: 5px;
+    display: inline-block;
+}
+
+.admin-nav-link:hover .gear-icon {
+    animation: rotateGear 2s linear infinite;
+}
+
+@keyframes rotateGear {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Блок быстрого доступа на главной */
+.admin-quick-access {
+    background: rgba(241, 196, 15, 0.05);
+    border: 1px solid rgba(241, 196, 15, 0.2);
+    padding: 20px 30px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.admin-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Мигающая точка (статус) */
+.status-pulse {
+    width: 10px;
+    height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--gold);
+    animation: statusBlink 1.5s infinite;
+}
+
+@keyframes statusBlink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+/* Большая кнопка Dashboard */
+.btn-admin-dash {
+    background: var(--gold);
+    color: #000;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.btn-admin-dash:hover {
+    background: #fff;
+    box-shadow: 0 0 20px rgba(241, 196, 15, 0.5);
+    transform: translateY(-2px);
+}

@@ -1,13 +1,12 @@
 from django.contrib.auth import login, logout, authenticate
-from .models import Game, Player, User
 from .forms import RegistrationForm
-from .models import Game
 from django.db.models import Q # Импортируем Q для сложного поиска
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import ProfileEditForm
-from .models import Player
 from .forms import PlayerProfileForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import user_passes_test
+from .models import Game, User, Player
 
 
 # Главная страница (Каталог)
@@ -180,3 +179,38 @@ def remove_from_favorites(request, game_id):
         game = get_object_or_404(Game, game_id=game_id)
         request.user.player.favorite_games.remove(game)
     return redirect(request.META.get('HTTP_REFERER', 'profile'))
+
+
+# Проверка: является ли пользователь администратором
+def is_admin(user):
+    return user.is_authenticated and user.role == 'administrator'
+
+
+@user_passes_test(is_admin)
+def admin_dashboard(request):
+    games = Game.objects.all().order_by('-game_id')
+    users = User.objects.all().order_by('-user_id')
+
+    context = {
+        'games': games,
+        'users': users,
+        'total_games': games.count(),
+        'total_users': users.count(),
+    }
+    return render(request, 'shopapp/admin_dashboard.html', context)
+
+
+@user_passes_test(is_admin)
+def admin_delete_game(request, game_id):
+    game = get_object_or_404(Game, game_id=game_id)
+    game.delete()
+    return redirect('admin_dashboard')
+
+
+@user_passes_test(is_admin)
+def admin_delete_user(request, user_id):
+    # Не даем админу удалить самого себя
+    if request.user.user_id != user_id:
+        user_to_delete = get_object_or_404(User, user_id=user_id)
+        user_to_delete.delete()
+    return redirect('admin_dashboard')

@@ -1,0 +1,150 @@
+{% extends 'shopapp/base.html' %}
+
+{% block title %}Админ-панель | Control Center{% endblock %}
+
+{% block content %}
+<div class="admin-wrapper fade-in">
+    <div class="admin-header">
+        <h1>Админ <span>панель</span></h1>
+        <div class="stats-bar">
+            <div class="stat-item">Игр: <span>{{ total_games }}</span></div>
+            <div class="stat-item">Пользователей: <span>{{ total_users }}</span></div>
+        </div>
+    </div>
+
+    <!-- Вкладки -->
+    <div class="admin-tabs">
+        <button class="tab-btn active" onclick="openTab('games')">🎮 Управление играми</button>
+        <button class="tab-btn" onclick="openTab('users')">👥 Пользователи</button>
+    </div>
+
+    <!-- Секция Игр -->
+    <div id="games" class="tab-content active">
+        <div class="content-header">
+          <h2>База данных <span>игр</span></h2>
+            <a href="/admin/shopapp/game/add/" class="btn-cyber-add">
+              <span class="plus-icon">+</span>
+              <span class="btn-text">Добавить игру</span>
+              <div class="btn-glitch"></div>
+            </a>
+        </div>
+        <table class="cyber-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Жанр</th>
+                    <th>Рейтинг</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in games %}
+                <tr>
+                    <td>#{{ game.game_id }}</td>
+                    <td class="text-white">{{ game.title }}</td>
+                    <td>{{ game.genre }}</td>
+                    <td class="text-accent">{{ game.rating }}</td>
+                    <td class="table-actions">
+    <div class="action-group">
+        <!-- Кнопка Редактировать -->
+        <a href="/admin/shopapp/game/{{ game.game_id }}/change/" class="admin-btn-hex edit" title="Редактировать">
+            <span class="icon">✏️</span>
+        </a>
+
+        <!-- Кнопка Удалить -->
+        <form action="{% url 'admin_delete_game' game.game_id %}" method="post" onsubmit="return confirm('Удалить игру из системы?')">
+            {% csrf_token %}
+            <button type="submit" class="admin-btn-hex delete" title="Стереть данные">
+                <span class="icon">🗑</span>
+            </button>
+        </form>
+    </div>
+</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Секция Пользователей -->
+    <div id="users" class="tab-content">
+        <table class="cyber-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Роль</th>
+                    <th>Действие</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>#{{ u.user_id }}</td>
+                    <td class="text-white">{{ u.email }}</td>
+                    <td><span class="role-tag {{ u.role }}">{{ u.role }}</span></td>
+                    <td>
+                        {% if u.user_id != user.user_id %}
+                        <form action="{% url 'admin_delete_user' u.user_id %}" method="post" onsubmit="return confirm('Удалить пользователя?')">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                        </form>
+                        {% else %}
+                            <span class="text-muted">Это вы</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function openTab(tabName) {
+    let contents = document.getElementsByClassName("tab-content");
+    let buttons = document.getElementsByClassName("tab-btn");
+    for (let i = 0; i < contents.length; i++) {
+        contents[i].classList.remove("active");
+        buttons[i].classList.remove("active");
+    }
+    document.getElementById(tabName).classList.add("active");
+    event.currentTarget.classList.add("active");
+}
+</script>
+
+<style>
+    .admin-wrapper { padding: 40px 0; }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+    .admin-header h1 span { color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); }
+
+    .stats-bar { display: flex; gap: 20px; }
+    .stat-item { background: var(--card-bg); padding: 10px 20px; border-radius: 8px; border: 1px solid var(--glass-border); font-size: 0.9rem; }
+    .stat-item span { color: var(--accent); font-weight: 800; }
+
+    /* Табы */
+    .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
+    .tab-btn { background: none; border: none; color: var(--text-muted); padding: 10px 20px; cursor: pointer; font-weight: 700; transition: 0.3s; }
+    .tab-btn.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.4s; }
+
+    /* Таблица */
+    .cyber-table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 12px; overflow: hidden; }
+    .cyber-table th { padding: 15px; text-align: left; background: rgba(255,255,255,0.05); color: var(--accent); font-size: 0.8rem; text-transform: uppercase; }
+    .cyber-table td { padding: 15px; border-bottom: 1px solid var(--glass-border); color: var(--text-muted); }
+
+    .table-btns { display: flex; gap: 15px; align-items: center; }
+    .btn-delete-icon { background: none; border: none; cursor: pointer; font-size: 1.1rem; filter: grayscale(1); transition: 0.3s; }
+    .btn-delete-icon:hover { filter: grayscale(0); transform: scale(1.2); }
+
+    .role-tag { padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; font-weight: 800; }
+    .role-tag.administrator { background: rgba(255, 75, 43, 0.2); color: var(--danger); }
+    .role-tag.player { background: rgba(0, 210, 255, 0.2); color: var(--accent); }
+
+    .content-actions { margin-bottom: 20px; }
+    .text-white { color: #fff; font-weight: 600; }
+</style>
+{% endblock %}
