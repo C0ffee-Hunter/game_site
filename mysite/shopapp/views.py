@@ -7,6 +7,7 @@ from .forms import PlayerProfileForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
 from .models import Game, User, Player
+from .forms import GameForm
 
 
 # Главная страница (Каталог)
@@ -213,4 +214,43 @@ def admin_delete_user(request, user_id):
     if request.user.user_id != user_id:
         user_to_delete = get_object_or_404(User, user_id=user_id)
         user_to_delete.delete()
+    return redirect('admin_dashboard')
+
+
+@user_passes_test(is_admin)
+def admin_game_upsert(request, game_id=None):
+    """Единая функция для добавления и редактирования игры"""
+    game = None
+    if game_id:
+        game = get_object_or_404(Game, game_id=game_id)
+
+    if request.method == 'POST':
+        form = GameForm(request.POST, instance=game)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_dashboard')
+    else:
+        form = GameForm(instance=game)
+
+    return render(request, 'shopapp/admin_game_form.html', {
+        'form': form,
+        'edit_mode': game_id is not None,
+        'game': game
+    })
+
+
+@user_passes_test(is_admin)
+def admin_toggle_role(request, user_id):
+    target_user = get_object_or_404(User, user_id=user_id)
+
+    # Защита: нельзя менять роль самому себе
+    if request.user.user_id == target_user.user_id:
+        return redirect('admin_dashboard')
+
+    if target_user.role == 'administrator':
+        target_user.role = 'player'
+    else:
+        target_user.role = 'administrator'
+
+    target_user.save()
     return redirect('admin_dashboard')

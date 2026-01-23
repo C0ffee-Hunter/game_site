@@ -16,4 +16,7 @@ urlpatterns = [
     path('dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('dashboard/game/delete/<int:game_id>/', views.admin_delete_game, name='admin_delete_game'),
     path('dashboard/user/delete/<int:user_id>/', views.admin_delete_user, name='admin_delete_user'),
+    path('dashboard/game/add/', views.admin_game_upsert, name='admin_game_add'),
+    path('dashboard/game/edit/<int:game_id>/', views.admin_game_upsert, name='admin_game_edit'),
+    path('dashboard/user/toggle-role/<int:user_id>/', views.admin_toggle_role, name='admin_toggle_role'),
 ]

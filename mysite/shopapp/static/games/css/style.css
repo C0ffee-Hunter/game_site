@@ -892,3 +892,54 @@ body {
     box-shadow: 0 0 20px rgba(241, 196, 15, 0.5);
     transform: translateY(-2px);
 }
+
+/* Кнопка смены роли */
+.admin-btn-hex.role-toggle {
+    color: var(--text-muted);
+    border-color: var(--glass-border);
+}
+
+/* Эффект, когда у пользователя уже есть роль админа */
+.admin-btn-hex.role-toggle.active {
+    color: var(--gold);
+    border-color: var(--gold);
+    background: rgba(241, 196, 15, 0.1);
+}
+
+.admin-btn-hex.role-toggle:hover {
+    color: #fff;
+    border-color: var(--accent);
+    background: var(--accent);
+    transform: rotate(360deg); /* Кнопка красиво проворачивается */
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+/* Оформление тегов ролей */
+.role-tag {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.role-tag.administrator {
+    background: rgba(241, 196, 15, 0.15);
+    color: var(--gold);
+    border: 1px solid rgba(241, 196, 15, 0.3);
+    box-shadow: 0 0 10px rgba(241, 196, 15, 0.1);
+}
+
+.role-tag.player {
+    background: rgba(0, 210, 255, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(0, 210, 255, 0.2);
+}
+
+/* Анимация появления */
+.table-btns form {
+    display: flex;
+}

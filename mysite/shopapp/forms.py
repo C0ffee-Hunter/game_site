@@ -56,3 +56,18 @@ class GameForm(forms.ModelForm):
         widgets = {
             field: forms.TextInput(attrs={'class': 'admin-input'}) for field in ['title', 'genre', 'publisher', 'country']
         }
+
+
+class GameForm(forms.ModelForm):
+    class Meta:
+        model = Game
+        fields = ['title', 'genre', 'publisher', 'country', 'release_year', 'rating']
+
+        widgets = {
+            'title': forms.TextInput(attrs={'placeholder': 'Название игры'}),
+            'genre': forms.TextInput(attrs={'placeholder': 'Например: RPG, Шутер'}),
+            'publisher': forms.TextInput(attrs={'placeholder': 'Издатель'}),
+            'country': forms.TextInput(attrs={'placeholder': 'Страна'}),
+            'release_year': forms.NumberInput(attrs={'placeholder': '2024'}),
+            'rating': forms.NumberInput(attrs={'step': '0.1', 'max': '10', 'min': '0'}),
+        }

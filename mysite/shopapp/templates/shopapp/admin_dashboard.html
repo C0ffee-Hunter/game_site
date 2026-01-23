@@ -22,7 +22,7 @@
     <div id="games" class="tab-content active">
         <div class="content-header">
           <h2>База данных <span>игр</span></h2>
-            <a href="/admin/shopapp/game/add/" class="btn-cyber-add">
+            <a href="game/add/" class="btn-cyber-add">
               <span class="plus-icon">+</span>
               <span class="btn-text">Добавить игру</span>
               <div class="btn-glitch"></div>
@@ -48,9 +48,7 @@
                     <td class="table-actions">
     <div class="action-group">
         <!-- Кнопка Редактировать -->
-        <a href="/admin/shopapp/game/{{ game.game_id }}/change/" class="admin-btn-hex edit" title="Редактировать">
-            <span class="icon">✏️</span>
-        </a>
+        <a href="{% url 'admin_game_edit' game.game_id %}" class="admin-btn-hex edit">✏️</a>
 
         <!-- Кнопка Удалить -->
         <form action="{% url 'admin_delete_game' game.game_id %}" method="post" onsubmit="return confirm('Удалить игру из системы?')">
@@ -80,22 +78,40 @@
             </thead>
             <tbody>
                 {% for u in users %}
-                <tr>
-                    <td>#{{ u.user_id }}</td>
-                    <td class="text-white">{{ u.email }}</td>
-                    <td><span class="role-tag {{ u.role }}">{{ u.role }}</span></td>
-                    <td>
-                        {% if u.user_id != user.user_id %}
-                        <form action="{% url 'admin_delete_user' u.user_id %}" method="post" onsubmit="return confirm('Удалить пользователя?')">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
-                        </form>
-                        {% else %}
-                            <span class="text-muted">Это вы</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
+<tr>
+    <td>#{{ u.user_id }}</td>
+    <td class="text-white">{{ u.email }}</td>
+    <td>
+        <span class="role-tag {{ u.role }}">
+            {% if u.role == 'administrator' %}⚡️ Админ{% else %}👤 Игрок{% endif %}
+        </span>
+    </td>
+    <td>
+        <div class="table-btns">
+            {% if u.user_id != user.user_id %}
+                <!-- Кнопка смены роли -->
+                <form action="{% url 'admin_toggle_role' u.user_id %}" method="post" style="margin:0;">
+                    {% csrf_token %}
+                    <button type="submit" class="admin-btn-hex role-toggle {% if u.role == 'administrator' %}active{% endif %}"
+                            title="Изменить уровень доступа">
+                        <span class="icon">🔑</span>
+                    </button>
+                </form>
+
+                <!-- Кнопка удаления -->
+                <form action="{% url 'admin_delete_user' u.user_id %}" method="post" onsubmit="return confirm('Удалить пользователя из системы?')">
+                    {% csrf_token %}
+                    <button type="submit" class="admin-btn-hex delete" title="Стереть аккаунт">
+                        <span class="icon">🗑</span>
+                    </button>
+                </form>
+            {% else %}
+                <span class="text-muted" style="font-size: 0.8rem;">(Это вы)</span>
+            {% endif %}
+        </div>
+    </td>
+</tr>
+{% endfor %}
             </tbody>
         </table>
     </div>
